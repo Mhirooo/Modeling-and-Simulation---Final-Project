@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Interactive Filipino Perya Color Game - Monte Carlo simulation for stochastic game analysis. Educational project demonstrating probability modeling and statistical analysis.">
+    <meta name="keywords" content="color game, perya, monte carlo simulation, probability, stochastic game, CSEC 413">
+    <meta name="author" content="CSEC 413 Project">
+    <meta name="theme-color" content="#2c3e50">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Filipino Perya Color Game - Interactive Simulation">
+    <meta property="og:description" content="Play and simulate the Filipino Perya Color Game with Monte Carlo analysis">
+    <meta property="og:url" content="https://yourdomain.com">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="./manifest.json">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🎲</text></svg>">
+    
+    <title>Filipino Perya Color Game - Interactive Simulation</title>
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="./styles.css">
+    
+    <!-- External Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+</head>
+<body>
+    <!-- Hamburger Menu Button -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar hidden" id="sidebar">
+            <div class="sidebar-header">
+                <h1>Color Game</h1>
+                <!-- <p class="subtitle">Stochastic Simulation</p> -->
+            </div>
+            
+            <div class="game-mode-section">
+                <h3>Game Mode</h3>
+                <div class="game-mode-option selected" onclick="selectGameMode('fair')">
+                    <input type="radio" id="fairMode" name="gameMode" value="fair" checked onchange="updateGameMode()">
+                    <label for="fairMode">Fair Game</label>
+                </div>
+                <div class="game-mode-option" onclick="selectGameMode('tweaked')">
+                    <input type="radio" id="tweakedMode" name="gameMode" value="tweaked" onchange="updateGameMode()">
+                    <label for="tweakedMode">Tweaked Game</label>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a class="nav-item active" onclick="showTab('play')">Play Game</a>
+                <a class="nav-item" onclick="showTab('simulate')">Run Simulation</a>
+                <a class="nav-item" onclick="showTab('stats')">Statistics</a>
+                <a class="nav-item" onclick="showTab('about')">About</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content expanded" id="mainContent">
+            <header>
+                <h1>Filipino Perya Color Game</h1>
+                <!-- <p class="subtitle">Interactive Stochastic Game Simulation</p> -->
+            </header>
+
+            <!-- Tab Navigation (hidden, controlled by sidebar) -->
+            <div class="tabs"></div>
+
+            <!-- Play Game Tab -->
+            <div id="play-tab" class="tab-content active">
+                <div class="game-section">
+                    <div class="game-header">
+                        <h2>Play the Color Game</h2>
+                    </div>
+
+                <div class="balance-section">
+                    <div class="stat-box">
+                        <div class="stat-label">Balance</div>
+                        <div class="stat-value" id="balance">₱1,000</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Total Rounds</div>
+                        <div class="stat-value" id="totalRounds">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Wins</div>
+                        <div class="stat-value" id="wins">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Win Rate</div>
+                        <div class="stat-value" id="winRate">0%</div>
+                    </div>
+                </div>
+
+                <div class="bet-section">
+                    <label for="betAmount">Bet Amount (₱)</label>
+                    <input type="number" id="betAmount" min="10" max="500" value="100" step="10" oninput="updateBetDisplay()">
+                </div>
+
+                <div class="color-selection">
+                    <h3>Select Your Color</h3>
+                    <div class="color-buttons">
+                        <button class="color-btn red" onclick="selectColor('Red')">Red</button>
+                        <button class="color-btn blue" onclick="selectColor('Blue')">Blue</button>
+                        <button class="color-btn green" onclick="selectColor('Green')">Green</button>
+                        <button class="color-btn yellow" onclick="selectColor('Yellow')">Yellow</button>
+                        <button class="color-btn white" onclick="selectColor('White')">White</button>
+                        <button class="color-btn pink" onclick="selectColor('Pink')">Pink</button>
+                    </div>
+                    <p class="selected-color">Selected: <span id="selectedColor">None</span></p>
+                </div>
+
+                <button class="roll-btn" id="rollBtn" onclick="rollDice()" disabled>
+                    🎲 Roll the Dice!
+                </button>
+
+                <div class="dice-container" id="diceContainer">
+                    <div class="dice" id="dice1">?</div>
+                    <div class="dice" id="dice2">?</div>
+                    <div class="dice" id="dice3">?</div>
+                </div>
+
+                <div class="result-section" id="resultSection" style="display: none;">
+                    <h3 id="resultTitle"></h3>
+                    <p id="resultMessage"></p>
+                    <p id="resultPayout"></p>
+                </div>
+
+                <button class="reset-btn" onclick="resetGame()">Reset Game</button>
+            </div>
+        </div>
+
+        <!-- Simulate Tab -->
+        <div id="simulate-tab" class="tab-content">
+            <div class="simulate-section">
+                <h2>Monte Carlo Simulation</h2>
+                
+                <div class="simulation-controls">
+                    <div class="control-group">
+                        <label for="simRounds">Number of Simulations:</label>
+                        <select id="simRounds">
+                            <option value="1000">1,000</option>
+                            <option value="5000" selected>5,000</option>
+                            <option value="10000">10,000</option>
+                            <option value="20000">20,000</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="simBet">Bet Amount:</label>
+                        <select id="simBet">
+                            <option value="50">$50</option>
+                            <option value="100" selected>$100</option>
+                            <option value="200">$200</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label>
+                            <input type="checkbox" id="compareBoth" checked>
+                            Compare Fair vs. Tweaked
+                        </label>
+                    </div>
+                </div>
+
+                <button class="simulate-btn" onclick="runSimulation()">
+                    ▶️ Run Simulation
+                </button>
+
+                <div id="simulationProgress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p id="progressText">Running simulation...</p>
+                </div>
+
+                <div id="simulationResults" style="display: none;">
+                    <h3>Simulation Results</h3>
+                    
+                    <div class="results-grid">
+                        <div class="result-card" id="fairResults" style="display: none;">
+                            <h4>Fair Game</h4>
+                            <div class="result-stats">
+                                <p><strong>House Edge:</strong> <span id="fairHouseEdge">-</span></p>
+                                <p><strong>Win Rate:</strong> <span id="fairWinRate">-</span></p>
+                                <p><strong>Total Profit:</strong> <span id="fairProfit">-</span></p>
+                                <p><strong>Avg per Round:</strong> <span id="fairAvg">-</span></p>
+                            </div>
+                        </div>
+
+                        <div class="result-card" id="tweakedResults" style="display: none;">
+                            <h4>Tweaked Game</h4>
+                            <div class="result-stats">
+                                <p><strong>House Edge:</strong> <span id="tweakedHouseEdge">-</span></p>
+                                <p><strong>Win Rate:</strong> <span id="tweakedWinRate">-</span></p>
+                                <p><strong>Total Profit:</strong> <span id="tweakedProfit">-</span></p>
+                                <p><strong>Avg per Round:</strong> <span id="tweakedAvg">-</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="charts-container">
+                        <div class="chart-box">
+                            <canvas id="profitChart"></canvas>
+                        </div>
+                        <div class="chart-box">
+                            <canvas id="distributionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Tab -->
+        <div id="stats-tab" class="tab-content">
+            <div class="stats-section">
+                <h2>Game Statistics & Probabilities</h2>
+                
+                <div class="theory-section">
+                    <h3>Theoretical Probabilities</h3>
+                    <table class="probability-table">
+                        <thead>
+                            <tr>
+                                <th>Matches</th>
+                                <th>Probability</th>
+                                <th>Payout</th>
+                                <th>Expected Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>0 matches</td>
+                                <td>57.87%</td>
+                                <td>-1× (Lose bet)</td>
+                                <td>-$57.87</td>
+                            </tr>
+                            <tr>
+                                <td>1 match</td>
+                                <td>34.72%</td>
+                                <td>+1× (Win equal)</td>
+                                <td>+$34.72</td>
+                            </tr>
+                            <tr>
+                                <td>2 matches</td>
+                                <td>6.94%</td>
+                                <td>+2× (Win double)</td>
+                                <td>+$13.89</td>
+                            </tr>
+                            <tr>
+                                <td>3 matches</td>
+                                <td>0.46%</td>
+                                <td>+3× (Win triple)</td>
+                                <td>+$1.39</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="3">Expected Return per $100 bet</th>
+                                <th>-$7.87</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="probability-section">
+                    <h3>Color Probabilities per Die</h3>
+                    <div class="prob-comparison">
+                        <div class="prob-card">
+                            <h4>Fair Game</h4>
+                            <ul class="prob-list">
+                                <li><span class="color-dot red"></span> Red: 16.67%</li>
+                                <li><span class="color-dot blue"></span> Blue: 16.67%</li>
+                                <li><span class="color-dot green"></span> Green: 16.67%</li>
+                                <li><span class="color-dot yellow"></span> Yellow: 16.67%</li>
+                                <li><span class="color-dot white"></span> White: 16.67%</li>
+                                <li><span class="color-dot pink"></span> Pink: 16.67%</li>
+                            </ul>
+                        </div>
+                        <div class="prob-card">
+                            <h4>Tweaked Game (15% Reduction)</h4>
+                            <ul class="prob-list">
+                                <li><span class="color-dot red"></span> Red: 14.17% <span class="change down">↓ -2.50%</span></li>
+                                <li><span class="color-dot blue"></span> Blue: 14.17% <span class="change down">↓ -2.50%</span></li>
+                                <li><span class="color-dot green"></span> Green: 14.17% <span class="change down">↓ -2.50%</span></li>
+                                <li><span class="color-dot yellow"></span> Yellow: 19.17% <span class="change up">↑ +2.50%</span></li>
+                                <li><span class="color-dot white"></span> White: 19.17% <span class="change up">↑ +2.50%</span></li>
+                                <li><span class="color-dot pink"></span> Pink: 19.17% <span class="change up">↑ +2.50%</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="session-stats" id="sessionStats">
+                    <h3>Your Session Statistics</h3>
+                    <p class="no-data" id="noStatsMessage">Play some games to see your statistics!</p>
+                    <canvas id="sessionChart" style="display: none;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- About Tab -->
+        <div id="about-tab" class="tab-content">
+            <div class="about-section">
+                <h2>About the Color Game</h2>
+                
+                <div class="info-box">
+                    <h3>🎡 Filipino Perya Tradition</h3>
+                    <p>The Color Game is a traditional Filipino carnival (perya) game that has been played for generations. It's a simple dice game that demonstrates probability concepts and house edge mechanics.</p>
+                </div>
+
+                <div class="info-box">
+                    <h3>🎮 How to Play</h3>
+                    <ol>
+                        <li>Choose your bet amount (slide the bet slider)</li>
+                        <li>Select one of the six colors</li>
+                        <li>Click "Roll the Dice"</li>
+                        <li>Three dice will be rolled</li>
+                        <li>Win based on how many dice match your color!</li>
+                    </ol>
+                </div>
+
+                <div class="info-box">
+                    <h3>💰 Payout Structure</h3>
+                    <ul>
+                        <li><strong>0 matches:</strong> You lose your bet (-1×)</li>
+                        <li><strong>1 match:</strong> You win 1:1 (get bet back + equal amount)</li>
+                        <li><strong>2 matches:</strong> You win 2:1 (get bet back + double)</li>
+                        <li><strong>3 matches:</strong> You win 3:1 (get bet back + triple) 🎉</li>
+                    </ul>
+                </div>
+
+                <div class="info-box">
+                    <h3>📊 Understanding House Edge</h3>
+                    <p>The <strong>house edge</strong> is the mathematical advantage that ensures the house makes a profit over time. Even in a "fair" game, the payout structure creates a house edge of about 7-9%.</p>
+                    <p>In the <strong>tweaked version</strong>, probabilities are adjusted to increase this advantage, simulating how casinos manipulate odds.</p>
+                </div>
+
+                <div class="info-box">
+                    <h3>🔬 Monte Carlo Simulation</h3>
+                    <p>The simulation feature runs thousands of games automatically to demonstrate how probability works over large sample sizes. This validates theoretical predictions and shows the power of statistical modeling.</p>
+                </div>
+
+                <div class="info-box">
+                    <h3>📚 Academic Context</h3>
+                    <p><strong>Course:</strong> CSEC 413 - Stochastic Game Simulation</p>
+                    <p><strong>Purpose:</strong> Demonstrate probability modeling, Monte Carlo methods, and statistical analysis</p>
+                    <p><strong>Date:</strong> December 5, 2025</p>
+                </div>
+
+                <div class="info-box">
+                    <h3>⚠️ Responsible Gaming</h3>
+                    <p>This is an educational simulation. Real gambling can lead to addiction and financial problems. The house always has an edge - in the long run, the house always wins!</p>
+                </div>
+            </div>
+        </div>
+
+            <footer>
+                <p>CSEC 413 Final Project - Stochastic Game Simulation | December 2025</p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Main Application Script -->
+    <script src="./game.js"></script>
+    
+    <!-- Performance Optimization -->
+    <script>
+        // Preload critical resources
+        if ('connection' in navigator && navigator.connection.effectiveType === '4g') {
+            // Only preload on fast connections
+            const link = document.createElement('link');
+            link.rel = 'preconnect';
+            link.href = 'https://cdn.jsdelivr.net';
+            document.head.appendChild(link);
+        }
+    </script>
+</body>
+</html>
