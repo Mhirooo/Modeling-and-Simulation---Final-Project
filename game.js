@@ -422,8 +422,8 @@ function displaySimulationResults(fairResults, tweakedResults) {
         document.getElementById('fairResults').style.display = 'block';
         document.getElementById('fairHouseEdge').textContent = fairResults.houseEdge.toFixed(2) + '%';
         document.getElementById('fairWinRate').textContent = fairResults.winRate.toFixed(2) + '%';
-        document.getElementById('fairProfit').textContent = '$' + fairResults.totalProfit.toFixed(2);
-        document.getElementById('fairAvg').textContent = '$' + fairResults.avgProfit.toFixed(2);
+        document.getElementById('fairProfit').textContent = '₱' + fairResults.totalProfit.toFixed(2);
+        document.getElementById('fairAvg').textContent = '₱' + fairResults.avgProfit.toFixed(2);
     }
     
     // Display tweaked results
@@ -431,8 +431,8 @@ function displaySimulationResults(fairResults, tweakedResults) {
         document.getElementById('tweakedResults').style.display = 'block';
         document.getElementById('tweakedHouseEdge').textContent = tweakedResults.houseEdge.toFixed(2) + '%';
         document.getElementById('tweakedWinRate').textContent = tweakedResults.winRate.toFixed(2) + '%';
-        document.getElementById('tweakedProfit').textContent = '$' + tweakedResults.totalProfit.toFixed(2);
-        document.getElementById('tweakedAvg').textContent = '$' + tweakedResults.avgProfit.toFixed(2);
+        document.getElementById('tweakedProfit').textContent = '₱' + tweakedResults.totalProfit.toFixed(2);
+        document.getElementById('tweakedAvg').textContent = '₱' + tweakedResults.avgProfit.toFixed(2);
     }
     
     // Create charts
