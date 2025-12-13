@@ -352,6 +352,8 @@ function simulateGames(mode, numRounds, betAmount) {
     let cumulativeProfit = [];
     let profitDistribution = [];
     let matchDistribution = { 0: 0, 1: 0, 2: 0, 3: 0 };
+
+    let roundsData = [];
     
     for (let i = 0; i < numRounds; i++) {
         const betColor = getRandomColor();
@@ -365,10 +367,20 @@ function simulateGames(mode, numRounds, betAmount) {
         cumulativeProfit.push(totalProfit);
         profitDistribution.push(payout);
         matchDistribution[matches]++;
+
+        roundsData.push({
+            play_number: i + 1,
+            model_type: mode,
+            bet: betAmount,
+            selected_color: betColor,
+            matches: matches,
+            profit: payout
+        });
     }
     
     return {
         mode: mode,
+        roundsData: roundsData,
         totalRounds: numRounds,
         totalBet: numRounds * betAmount,
         totalProfit: totalProfit,
@@ -610,70 +622,30 @@ function exportToCSV() {
         return;
     }
 
-    const data = window.lastSimulationData;
-    let csv = 'Color Game Simulation Results\n\n';
-    
-    // Simulation parameters
-    csv += 'SIMULATION PARAMETERS\n';
-    csv += `Date,${new Date().toLocaleDateString()}\n`;
-    csv += `Time,${new Date().toLocaleTimeString()}\n`;
-    csv += `Number of Rounds,${data.rounds}\n`;
-    csv += `Bet Amount,₱${data.betAmount}\n`;
-    csv += `Starting Balance,₱1000\n\n`;
-    
-    // Fair Game Results (if available)
-    if (data.fairResults) {
-        csv += 'FAIR GAME RESULTS\n';
-        csv += `Final Balance,₱${data.fairResults.balance.toFixed(2)}\n`;
-        csv += `Total Profit/Loss,₱${data.fairResults.totalProfit.toFixed(2)}\n`;
-        csv += `Win Rate,${data.fairResults.winRate.toFixed(2)}%\n`;
-        csv += `House Edge,${data.fairResults.houseEdge.toFixed(2)}%\n`;
-        csv += `Average per Round,₱${data.fairResults.avgPerRound.toFixed(2)}\n`;
-        csv += `Rounds Won,${data.fairResults.wins}\n`;
-        csv += `Rounds Lost,${data.fairResults.losses}\n`;
-        csv += '\nMatch Distribution\n';
-        csv += `0 Matches,${data.fairResults.matchDistribution[0]}\n`;
-        csv += `1 Match,${data.fairResults.matchDistribution[1]}\n`;
-        csv += `2 Matches,${data.fairResults.matchDistribution[2]}\n`;
-        csv += `3 Matches,${data.fairResults.matchDistribution[3]}\n\n`;
-    }
-    
-    // Tweaked Game Results (if available)
-    if (data.tweakedResults) {
-        csv += 'TWEAKED GAME RESULTS\n';
-        csv += `Final Balance,₱${data.tweakedResults.balance.toFixed(2)}\n`;
-        csv += `Total Profit/Loss,₱${data.tweakedResults.totalProfit.toFixed(2)}\n`;
-        csv += `Win Rate,${data.tweakedResults.winRate.toFixed(2)}%\n`;
-        csv += `House Edge,${data.tweakedResults.houseEdge.toFixed(2)}%\n`;
-        csv += `Average per Round,₱${data.tweakedResults.avgPerRound.toFixed(2)}\n`;
-        csv += `Rounds Won,${data.tweakedResults.wins}\n`;
-        csv += `Rounds Lost,${data.tweakedResults.losses}\n`;
-        csv += '\nMatch Distribution\n';
-        csv += `0 Matches,${data.tweakedResults.matchDistribution[0]}\n`;
-        csv += `1 Match,${data.tweakedResults.matchDistribution[1]}\n`;
-        csv += `2 Matches,${data.tweakedResults.matchDistribution[2]}\n`;
-        csv += `3 Matches,${data.tweakedResults.matchDistribution[3]}\n\n`;
-    }
-    
-    // Round-by-round data
-    if (data.fairResults && data.fairResults.profitHistory) {
-        csv += '\nROUND-BY-ROUND DATA (Fair Game)\n';
-        csv += 'Round,Cumulative Profit\n';
-        data.fairResults.profitHistory.forEach((profit, index) => {
-            csv += `${index + 1},₱${profit.toFixed(2)}\n`;
+    const { fairResults, tweakedResults } = window.lastSimulationData;
+
+    let rows = [];
+    rows.push("play_number,model_type,bet,selected_color,matches,profit");
+
+    if (fairResults) {
+        fairResults.roundsData.forEach(r => {
+            rows.push(`${r.play_number},${r.model_type},${r.bet},${r.selected_color},${r.matches},${r.profit}`);
         });
     }
-    
-    // Download CSV
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', `color_game_simulation_${Date.now()}.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
+
+    if (tweakedResults) {
+        tweakedResults.roundsData.forEach(r => {
+            rows.push(`${r.play_number},${r.model_type},${r.bet},${r.selected_color},${r.matches},${r.profit}`);
+        });
+    }
+
+    const csvContent = rows.join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "color_game_simulation_clean.csv";
     link.click();
-    document.body.removeChild(link);
 }
 
 // Export simulation results to PDF
