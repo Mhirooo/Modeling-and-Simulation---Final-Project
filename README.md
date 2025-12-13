@@ -74,3 +74,5 @@ This project is designed as a final requirement for the CSEC 413 - Modeling and 
 - How subtle changes in probability, without altering visible rules or payouts, can significantly shift long‑run player outcomes and house profit.​
 
 It combines interactive visualization, statistical analysis, and reproducible code to connect theoretical concepts in stochastic modeling with an accessible, culturally specific game example.
+
+Game Website: https://dapper-beignet-9f8821.netlify.app/
