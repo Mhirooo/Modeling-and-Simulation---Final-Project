@@ -602,3 +602,202 @@ function createDistributionChart(fairResults, tweakedResults) {
         }
     });
 }
+
+// Export simulation results to CSV
+function exportToCSV() {
+    if (!window.lastSimulationData) {
+        alert('No simulation data available. Please run a simulation first.');
+        return;
+    }
+
+    const data = window.lastSimulationData;
+    let csv = 'Color Game Simulation Results\n\n';
+    
+    // Simulation parameters
+    csv += 'SIMULATION PARAMETERS\n';
+    csv += `Date,${new Date().toLocaleDateString()}\n`;
+    csv += `Time,${new Date().toLocaleTimeString()}\n`;
+    csv += `Number of Rounds,${data.rounds}\n`;
+    csv += `Bet Amount,₱${data.betAmount}\n`;
+    csv += `Starting Balance,₱1000\n\n`;
+    
+    // Fair Game Results (if available)
+    if (data.fairResults) {
+        csv += 'FAIR GAME RESULTS\n';
+        csv += `Final Balance,₱${data.fairResults.balance.toFixed(2)}\n`;
+        csv += `Total Profit/Loss,₱${data.fairResults.totalProfit.toFixed(2)}\n`;
+        csv += `Win Rate,${data.fairResults.winRate.toFixed(2)}%\n`;
+        csv += `House Edge,${data.fairResults.houseEdge.toFixed(2)}%\n`;
+        csv += `Average per Round,₱${data.fairResults.avgPerRound.toFixed(2)}\n`;
+        csv += `Rounds Won,${data.fairResults.wins}\n`;
+        csv += `Rounds Lost,${data.fairResults.losses}\n`;
+        csv += '\nMatch Distribution\n';
+        csv += `0 Matches,${data.fairResults.matchDistribution[0]}\n`;
+        csv += `1 Match,${data.fairResults.matchDistribution[1]}\n`;
+        csv += `2 Matches,${data.fairResults.matchDistribution[2]}\n`;
+        csv += `3 Matches,${data.fairResults.matchDistribution[3]}\n\n`;
+    }
+    
+    // Tweaked Game Results (if available)
+    if (data.tweakedResults) {
+        csv += 'TWEAKED GAME RESULTS\n';
+        csv += `Final Balance,₱${data.tweakedResults.balance.toFixed(2)}\n`;
+        csv += `Total Profit/Loss,₱${data.tweakedResults.totalProfit.toFixed(2)}\n`;
+        csv += `Win Rate,${data.tweakedResults.winRate.toFixed(2)}%\n`;
+        csv += `House Edge,${data.tweakedResults.houseEdge.toFixed(2)}%\n`;
+        csv += `Average per Round,₱${data.tweakedResults.avgPerRound.toFixed(2)}\n`;
+        csv += `Rounds Won,${data.tweakedResults.wins}\n`;
+        csv += `Rounds Lost,${data.tweakedResults.losses}\n`;
+        csv += '\nMatch Distribution\n';
+        csv += `0 Matches,${data.tweakedResults.matchDistribution[0]}\n`;
+        csv += `1 Match,${data.tweakedResults.matchDistribution[1]}\n`;
+        csv += `2 Matches,${data.tweakedResults.matchDistribution[2]}\n`;
+        csv += `3 Matches,${data.tweakedResults.matchDistribution[3]}\n\n`;
+    }
+    
+    // Round-by-round data
+    if (data.fairResults && data.fairResults.profitHistory) {
+        csv += '\nROUND-BY-ROUND DATA (Fair Game)\n';
+        csv += 'Round,Cumulative Profit\n';
+        data.fairResults.profitHistory.forEach((profit, index) => {
+            csv += `${index + 1},₱${profit.toFixed(2)}\n`;
+        });
+    }
+    
+    // Download CSV
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `color_game_simulation_${Date.now()}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// Export simulation results to PDF
+function exportToPDF() {
+    if (!window.lastSimulationData) {
+        alert('No simulation data available. Please run a simulation first.');
+        return;
+    }
+
+    if (!window.jspdf || !window.jspdf.jsPDF) {
+        alert('PDF library is loading. Please try again in a moment.');
+        return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const data = window.lastSimulationData;
+    
+    let y = 20;
+    
+    // Title
+    doc.setFontSize(18);
+    doc.setFont(undefined, 'bold');
+    doc.text('Color Game Simulation Report', 105, y, { align: 'center' });
+    y += 10;
+    
+    // Date and time
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'normal');
+    doc.text(`Generated: ${new Date().toLocaleString()}`, 105, y, { align: 'center' });
+    y += 15;
+    
+    // Simulation Parameters
+    doc.setFontSize(14);
+    doc.setFont(undefined, 'bold');
+    doc.text('Simulation Parameters', 20, y);
+    y += 8;
+    
+    doc.setFontSize(11);
+    doc.setFont(undefined, 'normal');
+    doc.text(`Number of Rounds: ${data.rounds.toLocaleString()}`, 20, y);
+    y += 6;
+    doc.text(`Bet Amount: P${data.betAmount}`, 20, y);
+    y += 6;
+    doc.text(`Starting Balance: P1,000`, 20, y);
+    y += 12;
+    
+    // Fair Game Results
+    if (data.fairResults) {
+        doc.setFontSize(14);
+        doc.setFont(undefined, 'bold');
+        doc.text('Fair Game Results', 20, y);
+        y += 8;
+        
+        doc.setFontSize(11);
+        doc.setFont(undefined, 'normal');
+        doc.text(`Final Balance: P${data.fairResults.balance.toFixed(2)}`, 20, y);
+        y += 6;
+        doc.text(`Total Profit/Loss: P${data.fairResults.totalProfit.toFixed(2)}`, 20, y);
+        y += 6;
+        doc.text(`Win Rate: ${data.fairResults.winRate.toFixed(2)}%`, 20, y);
+        y += 6;
+        doc.text(`House Edge: ${data.fairResults.houseEdge.toFixed(2)}%`, 20, y);
+        y += 6;
+        doc.text(`Average per Round: P${data.fairResults.avgPerRound.toFixed(2)}`, 20, y);
+        y += 8;
+        
+        doc.setFont(undefined, 'bold');
+        doc.text('Match Distribution:', 20, y);
+        y += 6;
+        doc.setFont(undefined, 'normal');
+        doc.text(`0 Matches: ${data.fairResults.matchDistribution[0]} (${(data.fairResults.matchDistribution[0]/data.rounds*100).toFixed(1)}%)`, 25, y);
+        y += 6;
+        doc.text(`1 Match: ${data.fairResults.matchDistribution[1]} (${(data.fairResults.matchDistribution[1]/data.rounds*100).toFixed(1)}%)`, 25, y);
+        y += 6;
+        doc.text(`2 Matches: ${data.fairResults.matchDistribution[2]} (${(data.fairResults.matchDistribution[2]/data.rounds*100).toFixed(1)}%)`, 25, y);
+        y += 6;
+        doc.text(`3 Matches: ${data.fairResults.matchDistribution[3]} (${(data.fairResults.matchDistribution[3]/data.rounds*100).toFixed(1)}%)`, 25, y);
+        y += 12;
+    }
+    
+    // Tweaked Game Results
+    if (data.tweakedResults) {
+        if (y > 240) {
+            doc.addPage();
+            y = 20;
+        }
+        
+        doc.setFontSize(14);
+        doc.setFont(undefined, 'bold');
+        doc.text('Tweaked Game Results', 20, y);
+        y += 8;
+        
+        doc.setFontSize(11);
+        doc.setFont(undefined, 'normal');
+        doc.text(`Final Balance: P${data.tweakedResults.balance.toFixed(2)}`, 20, y);
+        y += 6;
+        doc.text(`Total Profit/Loss: P${data.tweakedResults.totalProfit.toFixed(2)}`, 20, y);
+        y += 6;
+        doc.text(`Win Rate: ${data.tweakedResults.winRate.toFixed(2)}%`, 20, y);
+        y += 6;
+        doc.text(`House Edge: ${data.tweakedResults.houseEdge.toFixed(2)}%`, 20, y);
+        y += 6;
+        doc.text(`Average per Round: P${data.tweakedResults.avgPerRound.toFixed(2)}`, 20, y);
+        y += 8;
+        
+        doc.setFont(undefined, 'bold');
+        doc.text('Match Distribution:', 20, y);
+        y += 6;
+        doc.setFont(undefined, 'normal');
+        doc.text(`0 Matches: ${data.tweakedResults.matchDistribution[0]} (${(data.tweakedResults.matchDistribution[0]/data.rounds*100).toFixed(1)}%)`, 25, y);
+        y += 6;
+        doc.text(`1 Match: ${data.tweakedResults.matchDistribution[1]} (${(data.tweakedResults.matchDistribution[1]/data.rounds*100).toFixed(1)}%)`, 25, y);
+        y += 6;
+        doc.text(`2 Matches: ${data.tweakedResults.matchDistribution[2]} (${(data.tweakedResults.matchDistribution[2]/data.rounds*100).toFixed(1)}%)`, 25, y);
+        y += 6;
+        doc.text(`3 Matches: ${data.tweakedResults.matchDistribution[3]} (${(data.tweakedResults.matchDistribution[3]/data.rounds*100).toFixed(1)}%)`, 25, y);
+    }
+    
+    // Footer
+    doc.setFontSize(8);
+    doc.setTextColor(128);
+    doc.text('CSEC 413 Final Project - Stochastic Game Simulation', 105, 285, { align: 'center' });
+    
+    // Save PDF
+    doc.save(`color_game_simulation_${Date.now()}.pdf`);
+}
