@@ -65,7 +65,7 @@ The payout schedule stays constant between models, only the underlying color pro
 
 ---
 
-This project is designed as a final requirement for a Modeling and Simulation course (CSEC 413) and illustrates:
+This project is designed as a final requirement for the CSEC 413 - Modeling and Simulation course and illustrates:
 
 - How to formalize a real‑world game of chance into a rule‑based computational model.
 
