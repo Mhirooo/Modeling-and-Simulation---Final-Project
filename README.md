@@ -1,158 +1,76 @@
-# 🎲 Filipino Perya Color Game - Web Version
+# **🎲 Filipino Perya Color Game**
+## **CSEC 413 - MODELING AND SIMULATION**
+### **Final Project**
 
-## Interactive Playable Website
+### **Group Members**
+Ramelle Mhiro Fortuna <br>
+Christine Kyla Belano
 
-This is the web-based version of the CSEC 413 Stochastic Game Simulation project. Play the game directly in your browser!
 
-## Features
+### **Project Overview**
+The repository models a six-color betting game played with three colored dice, focusing on how probability, randomness, and small tweaks to odds affect long‑run player profit and house edge. Two game configurations are implemented:​
 
-### 🎮 Play Mode
-- **Interactive Gameplay**: Click to select colors and roll dice
-- **Real-time Statistics**: Track your balance, wins, and win rate
-- **Two Game Modes**: 
-  - Fair Game (equal probabilities)
-  - Tweaked Game (house edge)
-- **Adjustable Bets**: Bet from $10 to $500 per round
-- **Visual Feedback**: Animated dice rolls and results
+- Fair model – all six colors have equal probability per die.
 
-### 📊 Simulation Mode
-- **Monte Carlo Simulation**: Run 1,000 to 20,000 simulations instantly
-- **Compare Modes**: See fair vs. tweaked side-by-side
-- **Live Charts**: 
-  - Cumulative profit evolution
-  - Match distribution analysis
-- **Real-time Statistics**: House edge, win rate, expected values
+- Tweaked model – probabilities are adjusted to subtly increase the house advantage while keeping the visible rules and payouts identical.​
 
-### 📈 Statistics Dashboard
-- **Theoretical Probabilities**: Complete probability breakdown
-- **Payout Structure**: Clear explanation of payouts
-- **Probability Comparison**: See how tweaked probabilities differ
-- **Session Stats**: Track your personal gameplay statistics
-
-### ℹ️ Educational Content
-- Game rules and history
-- Understanding house edge
-- Monte Carlo method explanation
-- Academic context
-
-## How to Use
-
-### Option 1: Open Directly
-Simply double-click `index.html` to open in your default browser.
-
-### Option 2: Local Server (Recommended)
-For best experience, run a local server:
-
-**Python:**
-```bash
-cd web
-python -m http.server 8000
-```
-Then open: http://localhost:8000
-
-**Node.js:**
-```bash
-cd web
-npx http-server
-```
-
-**VS Code:**
-Install "Live Server" extension and click "Go Live"
-
-## File Structure
-
-```
-web/
-├── index.html    # Main HTML structure
-├── styles.css    # All styling and animations
-├── game.js       # Game logic and simulation
-└── README.md     # This file
-```
-
-## Browser Compatibility
-
-Works best in modern browsers:
-- ✅ Chrome/Edge (recommended)
-- ✅ Firefox
-- ✅ Safari
-- ✅ Opera
-
-Requires JavaScript enabled.
-
-## How to Play
-
-1. **Choose Game Mode**: Fair or Tweaked
-2. **Set Your Bet**: Adjust the slider ($10-$500)
-3. **Select Color**: Click one of the six colors
-4. **Roll Dice**: Click the "Roll the Dice!" button
-5. **Check Results**: See if your color matches!
-
-### Winning
-
-- **0 matches** = Lose your bet
-- **1 match** = Win 1:1 (double your money)
-- **2 matches** = Win 2:1 (triple your money)
-- **3 matches** = Win 3:1 (quadruple your money) 🎉
-
-## Running Simulations
-
-1. Go to the "Run Simulation" tab
-2. Choose number of simulations (1,000-20,000)
-3. Select bet amount
-4. Check "Compare Both" to see fair vs. tweaked
-5. Click "Run Simulation"
-6. View charts and statistics
-
-## Key Insights
-
-The simulation demonstrates:
-- **Probability Theory**: How randomness works in practice
-- **House Edge**: Why casinos always win long-term
-- **Law of Large Numbers**: Results stabilize over many trials
-- **Expected Value**: Mathematical prediction of outcomes
-
-## Educational Value
-
-Perfect for:
-- Understanding probability
-- Learning Monte Carlo methods
-- Studying game theory
-- Analyzing stochastic processes
-- Visualizing statistical concepts
-
-## Technical Details
-
-**Technologies Used:**
-- HTML5
-- CSS3 (Grid, Flexbox, Animations)
-- Vanilla JavaScript (ES6+)
-- Chart.js for visualizations
-
-**No Dependencies** (except Chart.js CDN for charts)
-
-## Responsive Design
-
-Fully responsive - works on:
-- 💻 Desktop
-- 📱 Tablet
-- 📱 Mobile phones
-
-## Academic Context
-
-**Course**: CSEC 413  
-**Project**: Stochastic Game Simulation  
-**Topic**: Filipino Perya Color Game  
-**Date**: December 5, 2025  
-
-## License
-
-Educational use only - CSEC 413 Final Project
-
-## Credits
-
-Based on the traditional Filipino perya (carnival) Color Game.
-Developed as part of CSEC 413 coursework.
+The simulation runs tens of thousands of automated rounds, records detailed outcomes, and supports exploratory data analysis (EDA) of win rates, profit distributions, and cumulative profit over time.
 
 ---
 
-**Enjoy playing and learning about probability! 🎲📊**
+#### **Features**
+- Interactive web game UI
+    - Choose a color, set a bet, and roll three colored dice.
+    - Real‑time tracking of balance, total rounds, wins, win rate, and recent results.
+    - Responsive layout with sidebar navigation and tabbed views (play, simulation, results).
+
+- Two probability models
+
+    - Fair probabilities: each color has 1/6 chance per die.​
+
+    - Tweaked probabilities: Red/Blue/Green ≈ 0.1417, Yellow/White/Pink ≈ 0.1917 per die, increasing the house edge while preserving familiar gameplay.​
+
+- Monte Carlo simulation
+
+    - Run large batches of rounds (e.g., 20,000) with fixed bet size and random color choices.
+
+    - Option to simulate the fair model, the tweaked model, or both for side‑by‑side comparison.
+
+    - Outputs include total profit, average profit per round, win/loss counts, win rate, house edge, and cumulative profit trajectory
+
+- Export:
+
+    - CSV of all simulated rounds (play number, model type, bet, selected color, matches, profit).​
+
+    - PDF summary report with key metrics and match distributions for each model.
+
+#### **Game Rules and Payouts**
+- The player picks one of six colors: Red, Blue, Green, Yellow, White, or Pink.​
+
+- The player places a fixed bet amount (e.g., 100 units) for each round.
+
+- Three independent colored dice are rolled using the selected probability model.
+
+- Payouts depend on how many dice show the chosen color:​
+
+    - 0 matches: player loses the entire bet.
+
+    - 1 match: player gains 1× the bet.
+
+    - 2 matches: player gains 2× the bet.
+
+    - 3 matches: player gains 3× the bet.
+
+The payout schedule stays constant between models, only the underlying color probabilities change, allowing the project to isolate the effect of probability tweaks on long‑run outcomes.
+
+---
+
+This project is designed as a final requirement for a Modeling and Simulation course (CSEC 413) and illustrates:
+
+- How to formalize a real‑world game of chance into a rule‑based computational model.
+
+- How Monte Carlo simulation can estimate expected values, house edge, and risk over many trials.
+
+- How subtle changes in probability, without altering visible rules or payouts, can significantly shift long‑run player outcomes and house profit.​
+
+It combines interactive visualization, statistical analysis, and reproducible code to connect theoretical concepts in stochastic modeling with an accessible, culturally specific game example.
