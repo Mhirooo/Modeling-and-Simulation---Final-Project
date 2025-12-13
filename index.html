@@ -187,7 +187,13 @@
                 </div>
 
                 <div id="simulationResults" style="display: none;">
-                    <h3>Simulation Results</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3>Simulation Results</h3>
+                        <div class="export-buttons">
+                            <button class="export-btn" onclick="exportToCSV()">📊 Export CSV</button>
+                            <button class="export-btn" onclick="exportToPDF()">📄 Export PDF</button>
+                        </div>
+                    </div>
                     
                     <div class="results-grid">
                         <div class="result-card" id="fairResults" style="display: none;">
@@ -372,6 +378,9 @@
         </div>
     </div>
 
+    <!-- PDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
     <!-- Main Application Script -->
     <script src="./game.js"></script>
     

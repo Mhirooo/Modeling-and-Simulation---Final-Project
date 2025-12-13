@@ -373,10 +373,14 @@ function simulateGames(mode, numRounds, betAmount) {
         totalBet: numRounds * betAmount,
         totalProfit: totalProfit,
         avgProfit: totalProfit / numRounds,
+        avgPerRound: totalProfit / numRounds,
         wins: wins,
+        losses: numRounds - wins,
         winRate: (wins / numRounds) * 100,
         houseEdge: -(totalProfit / (numRounds * betAmount)) * 100,
+        balance: 1000 + totalProfit,
         cumulativeProfit: cumulativeProfit,
+        profitHistory: cumulativeProfit,
         profitDistribution: profitDistribution,
         matchDistribution: matchDistribution
     };
@@ -416,6 +420,18 @@ function updateProgress(percent) {
 function displaySimulationResults(fairResults, tweakedResults) {
     document.getElementById('simulationProgress').style.display = 'none';
     document.getElementById('simulationResults').style.display = 'block';
+    
+    // Store simulation data for export
+    const rounds = parseInt(document.getElementById('simRounds').value);
+    const betAmount = parseInt(document.getElementById('simBet').value);
+    
+    window.lastSimulationData = {
+        rounds: rounds,
+        betAmount: betAmount,
+        fairResults: fairResults,
+        tweakedResults: tweakedResults,
+        timestamp: new Date()
+    };
     
     // Display fair results
     if (fairResults) {
